@@ -37,6 +37,7 @@ const AutoMatchPanel = () => {
       <CardContent className="space-y-4">
         <div className="text-sm text-muted-foreground">
           <p>Let the system automatically find and match you with people for {currentCategory.word.toLowerCase()}!</p>
+          <p className="text-xs mt-1">The system will randomly select and invite available people up to your group size.</p>
         </div>
 
         <div className="flex items-center space-x-2 text-sm">

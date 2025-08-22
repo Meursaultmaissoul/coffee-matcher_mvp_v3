@@ -31,9 +31,18 @@ const Calendar = () => {
     
     setLoading(true);
     try {
-      // TODO: Add stats action to Google Apps Script
-      // For now, just clear loading
-      console.log('Stats functionality requires new GAS action');
+      const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
+      const response = await apiService.getStats({
+        email: state.email,
+        month: monthStr,
+        category: 'all',
+      });
+      
+      if (response.ok && response.data) {
+        setStats(response.data);
+      } else {
+        console.error('Failed to fetch stats:', response.error);
+      }
     } catch (error) {
       console.error('Failed to fetch calendar stats:', error);
     } finally {
@@ -43,15 +52,19 @@ const Calendar = () => {
 
   useEffect(() => {
     fetchStats(year, month);
-    // fetchAcceptanceHistory(); // TODO: Add this action to GAS
+    fetchAcceptanceHistory();
   }, [year, month, state.email]);
 
   const fetchAcceptanceHistory = async () => {
     if (!state.email) return;
     
     try {
-      // TODO: Add getAcceptanceHistory action to Google Apps Script
-      console.log('Acceptance history requires new GAS action');
+      const response = await apiService.getAcceptanceHistory(state.email);
+      if (response.ok && response.data) {
+        setAcceptanceHistory(response.data);
+      } else {
+        console.error('Failed to fetch acceptance history:', response.error);
+      }
     } catch (error) {
       console.error('Failed to fetch acceptance history:', error);
     }

@@ -39,9 +39,8 @@ class ApiService {
   private baseUrl: string;
 
   constructor() {
-    // TODO: Replace YOUR_SCRIPT_ID with your actual Google Apps Script deployment ID
-    // Get this from: Extensions → Apps Script → Deploy → Manage deployments → Copy URL
-    this.baseUrl = 'https://script.google.com/macros/s/AKfycbypx_biZEjw222Szshr5CwoKmvwZvTkYep4Ha2yzi8bQf_P3XtWBJeTbdcm7gQyHSJt/exec';
+    // Updated to use the correct Google Apps Script URL
+    this.baseUrl = 'https://script.google.com/macros/s/AKfycbxa-tqEsUHXEMQGGJ0Nn1_T2xynLJbGV7rr9qFYggVeSRwWKihyQ7pHVdzVi9Qmpfpd/exec';
   }
 
   private async makeRequest<T>(payload: any): Promise<ApiResponse<T>> {
@@ -53,8 +52,6 @@ class ApiService {
         formData.append(key, String(value));
       }
     });
-
-    console.log('Making request to Google Apps Script:', payload);
     
     const response = await fetch(this.baseUrl, {
       method: 'POST',
@@ -65,7 +62,6 @@ class ApiService {
     });
 
     const text = await response.text();
-    console.log('Response from Google Apps Script:', text);
     
     try {
       return JSON.parse(text);

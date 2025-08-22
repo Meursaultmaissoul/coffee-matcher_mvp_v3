@@ -228,9 +228,32 @@ export const useAppState = () => {
       return false;
     }
 
-    // TODO: Add autoMatch action to Google Apps Script
-    updateState({ error: 'Auto-match feature requires new GAS action - coming soon!' });
-    return false;
+    updateState({ loading: true, error: null });
+
+    try {
+      const response = await apiService.autoMatch({
+        email: state.email,
+        name: state.name,
+        category: state.category,
+        minAge: state.ageMinYap,
+        maxAge: state.ageMaxYap,
+        sameSex: state.sameSexYap,
+        userGender: state.gender,
+        groupMin: state.category === 'coffee' ? 1 : state.groupMin,
+        groupMax: state.category === 'coffee' ? 1 : state.groupMax,
+      });
+
+      if (response.ok) {
+        updateState({ loading: false, success: response.message || 'Match found and invitations sent!' });
+        return true;
+      } else {
+        updateState({ loading: false, error: response.error || 'Failed to find matches' });
+        return false;
+      }
+    } catch (error) {
+      updateState({ loading: false, error: 'Network error occurred' });
+      return false;
+    }
   }, [state, updateState]);
 
   return {
