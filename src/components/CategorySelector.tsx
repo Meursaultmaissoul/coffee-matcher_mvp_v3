@@ -43,15 +43,17 @@ const CategorySelector = ({ selected, onSelect, counts }: CategorySelectorProps)
       {categories.map((category) => (
         <Card
           key={category.id}
-          className={`cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 ${
+          className={`cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-xl border-2 ${
             selected === category.id
-              ? 'border-primary shadow-lg ring-4 ring-primary/20'
+              ? 'border-primary shadow-lg ring-4 ring-primary/20 scale-105'
               : 'border-border hover:border-primary/50'
           }`}
           onClick={() => onSelect(category.id)}
         >
           <CardContent className="p-6 text-center">
-            <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${category.gradient} ${category.hoverGradient} transition-all duration-300 mb-4 text-3xl`}>
+            <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${category.gradient} ${category.hoverGradient} transition-all duration-500 mb-4 text-3xl ${
+              selected === category.id ? 'animate-bounce-gentle' : ''
+            }`}>
               {category.emoji}
             </div>
             <h3 className="text-xl font-semibold mb-2">{category.title}</h3>
