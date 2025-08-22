@@ -41,7 +41,7 @@ class ApiService {
   constructor() {
     // TODO: Replace YOUR_SCRIPT_ID with your actual Google Apps Script deployment ID
     // Get this from: Extensions → Apps Script → Deploy → Manage deployments → Copy URL
-    this.baseUrl = 'https://script.google.com/macros/s/AKfycbypx_biZEjw222Szshr5CwoKmvwZvTkYep4Ha2yzi8bQf_P3XtWBJeTbdcm7gQyHSJt/exec';
+    this.baseUrl = 'https://script.google.com/macros/s/AKfycbxa-tqEsUHXEMQGGJ0Nn1_T2xynLJbGV7rr9qFYggVeSRwWKihyQ7pHVdzVi9Qmpfpd/exec';
   }
 
   private async request<T>(payload: any): Promise<ApiResponse<T>> {
