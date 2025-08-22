@@ -215,10 +215,10 @@ export const useAppState = () => {
     }
   }, [updateState]);
 
-  // Auto-refresh counts every 10 seconds for real-time updates
+  // Auto-refresh counts every 30 seconds to reduce API calls
   useEffect(() => {
     refreshCounts();
-    const interval = setInterval(refreshCounts, 10000);
+    const interval = setInterval(refreshCounts, 30000);
     return () => clearInterval(interval);
   }, [refreshCounts]);
 
