@@ -21,6 +21,7 @@ const Calendar = () => {
   const [stats, setStats] = useState<CalendarStats>({});
   const [loading, setLoading] = useState(false);
   const [recentActivity, setRecentActivity] = useState<string | null>(null);
+  const [acceptanceHistory, setAcceptanceHistory] = useState<string[]>([]);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -49,11 +50,25 @@ const Calendar = () => {
 
   useEffect(() => {
     fetchStats(year, month);
+    fetchAcceptanceHistory();
   }, [year, month, state.email]);
 
-  // React to successful invitations/pings
+  const fetchAcceptanceHistory = async () => {
+    if (!state.email) return;
+    
+    try {
+      const response = await apiService.getAcceptanceHistory(state.email);
+      if (response.ok && response.data) {
+        setAcceptanceHistory(response.data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch acceptance history:', error);
+    }
+  };
+
+  // React to successful invitations/pings/matches
   useEffect(() => {
-    if (state.success?.includes('sent') || state.success?.includes('Ping')) {
+    if (state.success?.includes('sent') || state.success?.includes('Ping') || state.success?.includes('Match')) {
       const today = new Date();
       const todayKey = formatDateKey(today);
       setRecentActivity(todayKey);
@@ -61,8 +76,11 @@ const Calendar = () => {
       // Clear the recent activity highlight after 3 seconds
       setTimeout(() => setRecentActivity(null), 3000);
       
-      // Refresh stats to show new activity
-      setTimeout(() => fetchStats(year, month), 1000);
+      // Refresh stats and acceptance history to show new activity
+      setTimeout(() => {
+        fetchStats(year, month);
+        fetchAcceptanceHistory();
+      }, 1000);
     }
   }, [state.success, year, month]);
 
@@ -162,6 +180,7 @@ const Calendar = () => {
             const dateKey = formatDateKey(date);
             const dayStats = stats[dateKey];
             const hasActivity = dayStats && dayStats.total > 0;
+            const hasAcceptance = acceptanceHistory.includes(dateKey);
 
             return (
               <div
@@ -173,34 +192,43 @@ const Calendar = () => {
                     : "bg-muted/30 border-muted text-muted-foreground",
                   isToday(date) && "ring-2 ring-primary bg-primary/5",
                   hasActivity && "bg-primary/5 border-primary/20",
+                  hasAcceptance && "bg-green-100 border-green-300 ring-1 ring-green-200",
                   recentActivity === dateKey && "bg-green-50 border-green-200 ring-2 ring-green-300 animate-pulse"
                 )}
               >
                 <div className="text-xs font-medium">
                   {date.getDate()}
                 </div>
-                {hasActivity && (
-                  <div className="space-y-1 mt-1">
-                    {dayStats.coffee > 0 && (
-                      <div className="flex items-center text-xs">
-                        <span className="mr-1">☕</span>
-                        <span>{Math.min(dayStats.coffee, 9)}</span>
-                      </div>
-                    )}
-                    {dayStats.lunch > 0 && (
-                      <div className="flex items-center text-xs">
-                        <span className="mr-1">🍱</span>
-                        <span>{Math.min(dayStats.lunch, 9)}</span>
-                      </div>
-                    )}
-                    {dayStats.zanpan > 0 && (
-                      <div className="flex items-center text-xs">
-                        <span className="mr-1">🍚</span>
-                        <span>{Math.min(dayStats.zanpan, 9)}</span>
-                      </div>
-                    )}
-                  </div>
-                )}
+                <div className="space-y-1 mt-1">
+                  {hasActivity && (
+                    <>
+                      {dayStats.coffee > 0 && (
+                        <div className="flex items-center text-xs">
+                          <span className="mr-1">☕</span>
+                          <span>{Math.min(dayStats.coffee, 9)}</span>
+                        </div>
+                      )}
+                      {dayStats.lunch > 0 && (
+                        <div className="flex items-center text-xs">
+                          <span className="mr-1">🍱</span>
+                          <span>{Math.min(dayStats.lunch, 9)}</span>
+                        </div>
+                      )}
+                      {dayStats.zanpan > 0 && (
+                        <div className="flex items-center text-xs">
+                          <span className="mr-1">🍚</span>
+                          <span>{Math.min(dayStats.zanpan, 9)}</span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {hasAcceptance && (
+                    <div className="flex items-center text-xs text-green-600">
+                      <span className="mr-1">✅</span>
+                      <span>Match</span>
+                    </div>
+                  )}
+                </div>
               </div>
             );
           })}

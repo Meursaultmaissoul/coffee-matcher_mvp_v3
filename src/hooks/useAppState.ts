@@ -213,18 +213,53 @@ export const useAppState = () => {
     }
   }, [updateState]);
 
-  // Auto-refresh counts every 30 seconds
+  // Auto-refresh counts every 10 seconds for real-time updates
   useEffect(() => {
     refreshCounts();
-    const interval = setInterval(refreshCounts, 30000);
+    const interval = setInterval(refreshCounts, 10000);
     return () => clearInterval(interval);
   }, [refreshCounts]);
+
+  const autoMatch = useCallback(async () => {
+    if (!state.email || !state.name) {
+      updateState({ error: 'Please fill in email and name first' });
+      return false;
+    }
+
+    updateState({ loading: true, error: null });
+
+    try {
+      const response = await apiService.autoMatch({
+        email: state.email,
+        name: state.name,
+        category: state.category,
+        minAge: state.ageMinYap,
+        maxAge: state.ageMaxYap,
+        sameSex: state.sameSexYap,
+        userGender: state.gender,
+        groupMin: state.category === 'coffee' ? 1 : state.groupMin,
+        groupMax: state.category === 'coffee' ? 1 : state.groupMax,
+      });
+
+      if (response.ok) {
+        updateState({ loading: false, success: response.message || 'Match found and invitations sent!' });
+        return true;
+      } else {
+        updateState({ loading: false, error: response.error || 'Failed to find matches' });
+        return false;
+      }
+    } catch (error) {
+      updateState({ loading: false, error: 'Network error occurred' });
+      return false;
+    }
+  }, [state, updateState]);
 
   return {
     state,
     updateState,
     saveProfile,
     sendPing,
+    autoMatch,
     refreshCounts,
     categoryConfig: CATEGORY_CONFIG,
   };

@@ -5,6 +5,7 @@ import CategorySelector from '@/components/CategorySelector';
 import UserProfile from '@/components/UserProfile';
 import StatusToggle from '@/components/StatusToggle';
 import PingPanel from '@/components/PingPanel';
+import AutoMatchPanel from '@/components/AutoMatchPanel';
 import Calendar from '@/components/Calendar';
 import { useToast } from '@/hooks/use-toast';
 
@@ -103,6 +104,8 @@ const Index = () => {
               <StatusToggle />
               
               <PingPanel />
+              
+              <AutoMatchPanel />
             </div>
 
             {/* Right Column - Calendar */}

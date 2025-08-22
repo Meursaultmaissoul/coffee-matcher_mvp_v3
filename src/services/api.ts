@@ -97,8 +97,32 @@ class ApiService {
     sameSex?: boolean;
   }): Promise<ApiResponse<CountsResponse>> {
     return this.request({
-      action: 'getCounts',
+      action: 'openCounts',
       ...filters,
+    });
+  }
+
+  async autoMatch(request: {
+    email: string;
+    name: string;
+    category: string;
+    minAge: number;
+    maxAge: number;
+    sameSex: boolean;
+    userGender: string;
+    groupMin: number;
+    groupMax: number;
+  }): Promise<ApiResponse> {
+    return this.request({
+      action: 'autoMatch',
+      ...request,
+    });
+  }
+
+  async getAcceptanceHistory(email: string): Promise<ApiResponse> {
+    return this.request({
+      action: 'getAcceptanceHistory',
+      email,
     });
   }
 
