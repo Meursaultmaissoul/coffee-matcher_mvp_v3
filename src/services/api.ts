@@ -105,7 +105,7 @@ class ApiService {
     sameSex?: boolean;
   }): Promise<ApiResponse<CountsResponse>> {
     return this.makeRequest({
-      action: 'counts',
+      action: 'openCounts',
       ...filters,
     });
   }

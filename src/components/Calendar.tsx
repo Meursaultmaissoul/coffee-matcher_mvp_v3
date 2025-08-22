@@ -31,28 +31,9 @@ const Calendar = () => {
     
     setLoading(true);
     try {
-      const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
-      let response = await apiService.getStats({
-        email: state.email,
-        month: monthStr,
-        category: 'all',
-      });
-      
-      // If stats doesn't work, try alternative approaches
-      if (!response.ok) {
-        console.log('Trying alternative stats approach...');
-        response = await apiService.request({
-          action: 'getInviteHistory',
-          email: state.email,
-          month: monthStr
-        });
-      }
-      
-      if (response.ok && response.data) {
-        setStats(response.data);
-      } else {
-        console.error('Failed to fetch stats:', response.error);
-      }
+      // TODO: Add stats action to Google Apps Script
+      // For now, just clear loading
+      console.log('Stats functionality requires new GAS action');
     } catch (error) {
       console.error('Failed to fetch calendar stats:', error);
     } finally {
@@ -62,28 +43,15 @@ const Calendar = () => {
 
   useEffect(() => {
     fetchStats(year, month);
-    fetchAcceptanceHistory();
+    // fetchAcceptanceHistory(); // TODO: Add this action to GAS
   }, [year, month, state.email]);
 
   const fetchAcceptanceHistory = async () => {
     if (!state.email) return;
     
     try {
-      let response = await apiService.getAcceptanceHistory(state.email);
-      
-      // Try alternative approaches if the main one fails
-      if (!response.ok) {
-        console.log('Trying alternative acceptance history approach...');
-        response = await apiService.request({
-          action: 'getInviteStatus', 
-          email: state.email,
-          column: 'H'
-        });
-      }
-      
-      if (response.ok && response.data) {
-        setAcceptanceHistory(response.data);
-      }
+      // TODO: Add getAcceptanceHistory action to Google Apps Script
+      console.log('Acceptance history requires new GAS action');
     } catch (error) {
       console.error('Failed to fetch acceptance history:', error);
     }

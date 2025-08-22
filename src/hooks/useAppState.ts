@@ -202,50 +202,16 @@ export const useAppState = () => {
 
   const refreshCounts = useCallback(async () => {
     try {
-      // Try multiple action names to find the right one
-      let response = await apiService.getCounts({});
-      
-      // If counts doesn't work, try other common action names
-      if (!response.ok) {
-        console.log('Trying alternative action names...');
-        // Try direct sheet reading approach
-        response = await apiService.request({
-          action: 'getSheetData',
-          sheet: 'Users',
-          column: 'F'
-        });
-      }
-      
-      if (!response.ok) {
-        // Try another approach
-        response = await apiService.request({
-          action: 'getUserStatus'
-        });
-      }
+      // Use the correct action name from the GAS code
+      const response = await apiService.getCounts({});
 
       if (response.ok && response.data) {
         updateState({ counts: response.data });
       } else {
         console.error('Failed to get counts:', response.error);
-        // Fallback: set some test data to show the UI is working
-        updateState({ 
-          counts: { 
-            coffee: Math.floor(Math.random() * 5), 
-            lunch: Math.floor(Math.random() * 3), 
-            zanpan: Math.floor(Math.random() * 2) 
-          } 
-        });
       }
     } catch (error) {
       console.error('Failed to refresh counts:', error);
-      // Show network connectivity with test data
-      updateState({ 
-        counts: { 
-          coffee: Math.floor(Math.random() * 5), 
-          lunch: Math.floor(Math.random() * 3), 
-          zanpan: Math.floor(Math.random() * 2) 
-        } 
-      });
     }
   }, [updateState]);
 
@@ -262,32 +228,9 @@ export const useAppState = () => {
       return false;
     }
 
-    updateState({ loading: true, error: null });
-
-    try {
-      const response = await apiService.autoMatch({
-        email: state.email,
-        name: state.name,
-        category: state.category,
-        minAge: state.ageMinYap,
-        maxAge: state.ageMaxYap,
-        sameSex: state.sameSexYap,
-        userGender: state.gender,
-        groupMin: state.category === 'coffee' ? 1 : state.groupMin,
-        groupMax: state.category === 'coffee' ? 1 : state.groupMax,
-      });
-
-      if (response.ok) {
-        updateState({ loading: false, success: response.message || 'Match found and invitations sent!' });
-        return true;
-      } else {
-        updateState({ loading: false, error: response.error || 'Failed to find matches' });
-        return false;
-      }
-    } catch (error) {
-      updateState({ loading: false, error: 'Network error occurred' });
-      return false;
-    }
+    // TODO: Add autoMatch action to Google Apps Script
+    updateState({ error: 'Auto-match feature requires new GAS action - coming soon!' });
+    return false;
   }, [state, updateState]);
 
   return {
