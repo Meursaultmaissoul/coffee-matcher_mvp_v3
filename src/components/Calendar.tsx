@@ -20,6 +20,7 @@ const Calendar = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [stats, setStats] = useState<CalendarStats>({});
   const [loading, setLoading] = useState(false);
+  const [recentActivity, setRecentActivity] = useState<string | null>(null);
 
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -49,6 +50,21 @@ const Calendar = () => {
   useEffect(() => {
     fetchStats(year, month);
   }, [year, month, state.email]);
+
+  // React to successful invitations/pings
+  useEffect(() => {
+    if (state.success?.includes('sent') || state.success?.includes('Ping')) {
+      const today = new Date();
+      const todayKey = formatDateKey(today);
+      setRecentActivity(todayKey);
+      
+      // Clear the recent activity highlight after 3 seconds
+      setTimeout(() => setRecentActivity(null), 3000);
+      
+      // Refresh stats to show new activity
+      setTimeout(() => fetchStats(year, month), 1000);
+    }
+  }, [state.success, year, month]);
 
   const getDaysInMonth = (year: number, month: number) => {
     const firstDay = new Date(year, month, 1);
@@ -151,12 +167,13 @@ const Calendar = () => {
               <div
                 key={date.toISOString()}
                 className={cn(
-                  "min-h-16 p-2 border rounded-lg transition-all duration-200 hover:scale-105",
+                  "min-h-16 p-2 border rounded-lg transition-all duration-500 hover:scale-105",
                   isCurrentMonth(date)
                     ? "bg-background border-border"
                     : "bg-muted/30 border-muted text-muted-foreground",
                   isToday(date) && "ring-2 ring-primary bg-primary/5",
-                  hasActivity && "bg-primary/5 border-primary/20"
+                  hasActivity && "bg-primary/5 border-primary/20",
+                  recentActivity === dateKey && "bg-green-50 border-green-200 ring-2 ring-green-300 animate-pulse"
                 )}
               >
                 <div className="text-xs font-medium">

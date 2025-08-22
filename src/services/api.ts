@@ -97,8 +97,15 @@ class ApiService {
     sameSex?: boolean;
   }): Promise<ApiResponse<CountsResponse>> {
     return this.request({
-      action: 'openCounts',
+      action: 'getCounts',
       ...filters,
+    });
+  }
+
+  async getOpenUsers(category: string): Promise<ApiResponse> {
+    return this.request({
+      action: 'getOpenUsers',
+      category,
     });
   }
 

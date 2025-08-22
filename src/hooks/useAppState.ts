@@ -202,13 +202,8 @@ export const useAppState = () => {
 
   const refreshCounts = useCallback(async () => {
     try {
-      const response = await apiService.getCounts({
-        excludeEmail: state.email || null,
-        minAge: state.ageMin,
-        maxAge: state.ageMax,
-        userGender: state.gender,
-        sameSex: state.sameSexPref,
-      });
+      // Get counts for all categories without filters to show total open people
+      const response = await apiService.getCounts({});
 
       if (response.ok && response.data) {
         updateState({ counts: response.data });
@@ -216,7 +211,7 @@ export const useAppState = () => {
     } catch (error) {
       console.error('Failed to refresh counts:', error);
     }
-  }, [state.email, state.ageMin, state.ageMax, state.gender, state.sameSexPref, updateState]);
+  }, [updateState]);
 
   // Auto-refresh counts every 30 seconds
   useEffect(() => {

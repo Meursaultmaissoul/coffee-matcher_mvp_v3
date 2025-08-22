@@ -6,7 +6,7 @@ import { useAppState } from '@/hooks/useAppState';
 import DualRangeSlider from './DualRangeSlider';
 
 const PingPanel = () => {
-  const { state, updateState, sendPing, categoryConfig } = useAppState();
+  const { state, updateState, sendPing, refreshCounts, categoryConfig } = useAppState();
   
   const currentCategory = categoryConfig[state.category];
   const showGroupSize = state.category !== 'coffee';
@@ -14,12 +14,16 @@ const PingPanel = () => {
   const handlePing = async () => {
     const success = await sendPing();
     if (success) {
-      // Add success animation
+      // Add success animation and refresh counts
       const button = document.querySelector('[data-ping-button]') as HTMLElement;
       if (button) {
-        button.classList.add('animate-pulse');
-        setTimeout(() => button.classList.remove('animate-pulse'), 2000);
+        button.classList.add('animate-bounce');
+        setTimeout(() => button.classList.remove('animate-bounce'), 1000);
       }
+      // Refresh counts to show updated numbers
+      setTimeout(() => {
+        refreshCounts();
+      }, 500);
     }
   };
 
