@@ -32,14 +32,26 @@ const Calendar = () => {
     setLoading(true);
     try {
       const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
-      const response = await apiService.getStats({
+      let response = await apiService.getStats({
         email: state.email,
         month: monthStr,
         category: 'all',
       });
       
+      // If stats doesn't work, try alternative approaches
+      if (!response.ok) {
+        console.log('Trying alternative stats approach...');
+        response = await apiService.request({
+          action: 'getInviteHistory',
+          email: state.email,
+          month: monthStr
+        });
+      }
+      
       if (response.ok && response.data) {
         setStats(response.data);
+      } else {
+        console.error('Failed to fetch stats:', response.error);
       }
     } catch (error) {
       console.error('Failed to fetch calendar stats:', error);
@@ -57,7 +69,18 @@ const Calendar = () => {
     if (!state.email) return;
     
     try {
-      const response = await apiService.getAcceptanceHistory(state.email);
+      let response = await apiService.getAcceptanceHistory(state.email);
+      
+      // Try alternative approaches if the main one fails
+      if (!response.ok) {
+        console.log('Trying alternative acceptance history approach...');
+        response = await apiService.request({
+          action: 'getInviteStatus', 
+          email: state.email,
+          column: 'H'
+        });
+      }
+      
       if (response.ok && response.data) {
         setAcceptanceHistory(response.data);
       }
