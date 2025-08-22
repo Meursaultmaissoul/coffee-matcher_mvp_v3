@@ -8,6 +8,14 @@ interface CategorySelectorProps {
 }
 
 const CategorySelector = ({ selected, onSelect, counts }: CategorySelectorProps) => {
+  const handleCategorySelect = (category: Category) => {
+    if (category !== selected) {
+      // Save the new category first
+      localStorage.setItem('cm_category', category);
+      // Then reload the entire page
+      window.location.reload();
+    }
+  };
   const categories = [
     {
       id: 'coffee' as Category,
@@ -48,7 +56,7 @@ const CategorySelector = ({ selected, onSelect, counts }: CategorySelectorProps)
               ? 'border-primary shadow-lg ring-4 ring-primary/20 scale-105'
               : 'border-border hover:border-primary/50'
           }`}
-          onClick={() => onSelect(category.id)}
+          onClick={() => handleCategorySelect(category.id)}
         >
           <CardContent className="p-6 text-center">
             <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-r ${category.gradient} ${category.hoverGradient} transition-all duration-500 mb-4 text-3xl ${

@@ -91,7 +91,7 @@ const Index = () => {
           {/* Category Selector */}
           <CategorySelector
             selected={state.category}
-            onSelect={(category) => updateState({ category })}
+            onSelect={() => {}} // Not used anymore - full page reload happens in CategorySelector
             counts={state.counts}
           />
 

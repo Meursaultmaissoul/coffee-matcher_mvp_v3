@@ -222,33 +222,6 @@ export const useAppState = () => {
     return () => clearInterval(interval);
   }, [refreshCounts]);
 
-  // Load category-specific settings when category changes
-  useEffect(() => {
-    // Don't run on initial load - only when category actually changes  
-    if (!state.email && !state.name) return;
-
-    const categorySettings = {
-      open: localStorage.getItem(`cm_open_${state.category}`) === '1',
-      sameSexPref: localStorage.getItem(`cm_same_${state.category}`) === '1',
-      groupMin: parseInt(localStorage.getItem(`cm_gmin_${state.category}`) || '1'),
-      groupMax: parseInt(localStorage.getItem(`cm_gmax_${state.category}`) || (state.category === 'coffee' ? '1' : '3')),
-    };
-
-    setState(prev => ({
-      ...prev,
-      ...categorySettings,
-      // Also update yap settings to match
-      ageMinYap: prev.ageMin,
-      ageMaxYap: prev.ageMax,
-      sameSexYap: localStorage.getItem('cm_same_yap') === '1',
-    }));
-
-    // Refresh counts immediately when category changes
-    setTimeout(() => {
-      refreshCounts();
-    }, 100);
-  }, [state.category, refreshCounts]);
-
   const autoMatch = useCallback(async () => {
     if (!state.email || !state.name) {
       updateState({ error: 'Please fill in email and name first' });
