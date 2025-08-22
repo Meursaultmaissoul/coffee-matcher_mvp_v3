@@ -39,7 +39,8 @@ class ApiService {
   private baseUrl: string;
 
   constructor() {
-    // Replace with your actual GAS Web App URL
+    // TODO: Replace YOUR_SCRIPT_ID with your actual Google Apps Script deployment ID
+    // Get this from: Extensions → Apps Script → Deploy → Manage deployments → Copy URL
     this.baseUrl = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
   }
 
