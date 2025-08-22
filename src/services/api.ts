@@ -45,12 +45,21 @@ class ApiService {
   }
 
   private async request<T>(payload: any): Promise<ApiResponse<T>> {
+    // Use form-encoded data instead of JSON to avoid CORS issues with Google Apps Script
+    const formData = new URLSearchParams();
+    Object.keys(payload).forEach(key => {
+      const value = payload[key];
+      if (value !== null && value !== undefined) {
+        formData.append(key, String(value));
+      }
+    });
+
     const response = await fetch(this.baseUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: JSON.stringify(payload),
+      body: formData,
     });
 
     const text = await response.text();
